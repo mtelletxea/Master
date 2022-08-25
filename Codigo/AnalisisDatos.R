@@ -182,7 +182,7 @@ threat_eu %>%
   scale_y_continuous(limits = c(0, 100))
 
 # Guardar y cargar grafico anterior
-gr_threat_eu <- load.image("./Plots/threat_eu2.png")
+gr_threat_eu <- load.image("./Plots/threat_eu.png")
 
 ## Representar grafico de especies incluidas en cada categoria de la Lista Roja a escala europea
 gr_category_eu <- RedListIUCN_category_count_eu %>%
@@ -252,7 +252,7 @@ threat_med %>%
   scale_y_continuous(limits = c(0, 100))
 
 # Guardar y cargar grafico anterior
-gr_threat_med <- load.image("./Plots/threat_med2.png")
+gr_threat_med <- load.image("./Plots/threat_med.png")
 
 ## Representar grafico de especies incluidas en cada categoria de la Lista Roja a escala mediterranea
 gr_category_med <- RedListIUCN_category_count_med %>%
