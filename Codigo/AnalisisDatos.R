@@ -19,6 +19,7 @@ library(cowplot)
 library(imager)
 library(magick)
 library(gridExtra)
+library(grid)
 library(car)
 options(scipen = 999)
 
@@ -138,6 +139,8 @@ save(LIFE_IUCN_all_genuine, LIFEproject_IUCN_all_genuine, file = "./Workspaces/L
 
 ## Especies incluidas en cada categoria a escala europea
 RedListIUCN_category_count_eu <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "europe") == TRUE, ] %>% 
+  # No incluir categoria NA
+  filter(current_category != "NA") %>%
   # Agrupar por categoria
   group_by(current_category) %>%
   # Contar especies en cada grupo
@@ -147,6 +150,8 @@ RedListIUCN_category_count_eu <- RedListIUCN[str_detect(RedListIUCN$region_ident
 
 ## Especies incluidas en las 3 categorias de amenaza a escala europea
 threat_eu <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "europe") == TRUE, ] %>%
+  # No incluir categoria NA
+  filter(current_category != "NA") %>%
   # Clasificar especies en amenazada o no amenazada
   mutate(threat = ifelse(str_detect(current_category, pattern = "VU|EN|CR"), "amenazada", "no amenazada")) %>%
   # Agrupar por riesgo de amenaza
@@ -154,11 +159,11 @@ threat_eu <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "eu
   # Contar especies en cada grupo
   summarise(number_species = n()) %>% 
   # Calcular proporcion
-  mutate(freq = number_species/sum(number_species))
+  mutate(percentage = number_species/sum(number_species)*100)
 
 ## Representar grafico de especies incluidas y no incluidas en las categorias de amenaza a escala europea
 threat_eu %>%
-  ggplot(aes(x = threat, y = freq, fill = threat)) +
+  ggplot(aes(x = threat, y = percentage, fill = threat)) +
   # Grafico de barras
   geom_col() +
   # Definir color
@@ -166,23 +171,21 @@ threat_eu %>%
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = NULL, y = "Proporción") +
+  labs(x = NULL, y = "Porcentaje (%)") +
   # Modificar leyenda y texto de los ejes
   theme(legend.position = "none",
         axis.text = element_text(size = 20, colour = "black"),
         axis.title = element_text(size = 20, colour = "black")) +
   # Incluir etiquetas
-  geom_text(aes(label = number_species), vjust = -1, colour = "black", size = 5) +
+  geom_text(aes(label = paste(number_species,"\n","(",sprintf("%0.2f", round(percentage, digits = 2)),"%)")), colour = "black", vjust = -1, size = 5) +
   # Ajustar eje y
-  scale_y_continuous(limits=c(0, 1))
+  scale_y_continuous(limits = c(0, 100))
 
 # Guardar y cargar grafico anterior
-gr_threat_eu <- load.image("./Plots/threat_eu.png")
+gr_threat_eu <- load.image("./Plots/threat_eu2.png")
 
 ## Representar grafico de especies incluidas en cada categoria de la Lista Roja a escala europea
 gr_category_eu <- RedListIUCN_category_count_eu %>%
-  # Ignorar categoria NA en la representacion
-  filter(current_category != "NA") %>% 
   ggplot(aes(x = current_category, y = percentage, fill = current_category)) +
   # Grafico de barras
   geom_col() +
@@ -195,17 +198,19 @@ gr_category_eu <- RedListIUCN_category_count_eu %>%
         axis.text = element_text(size = 30, colour = "black"),
         axis.title = element_text(size = 30, colour = "black")) +
   # Incluir etiquetas
-  geom_text(aes(label = number_species), vjust = -1, colour = "black", size = 8) +
+  geom_text(aes(label = paste(number_species,"\n","(",sprintf("%0.2f", round(percentage, digits = 2)),"%)")), colour = "black", vjust = -0.5, size = 5) +
   # Ajustar eje y
-  scale_y_continuous(limits=c(0, 55),
-                     breaks=c(10, 20, 30, 40, 50))
+  scale_y_continuous(limits = c(0, 55),
+                     breaks = c(10, 20, 30, 40, 50))
 
 ### Representar ambos graficos sobre la distribucion de categorias actual a escala europea
 grafico_eu <- ggdraw(gr_category_eu) + 
   draw_image(gr_threat_eu, x = 1, y = 1, hjust = 1, vjust = 1, width = 0.5, height = 0.5)
 
 ## Especies incluidas en cada categoria a escala mediterranea
-RedListIUCN_category_count_med <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "mediterranean") == TRUE, ] %>% 
+RedListIUCN_category_count_med <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "mediterranean") == TRUE, ] %>%
+  # No incluir categoria NA
+  filter(current_category != "NA") %>%
   # Agrupar por categoria
   group_by(current_category) %>%
   # Contar especies en cada grupo
@@ -215,6 +220,8 @@ RedListIUCN_category_count_med <- RedListIUCN[str_detect(RedListIUCN$region_iden
 
 # Especies incluidas en las 3 categorias de amenaza a escala mediterranea
 threat_med <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "mediterranean") == TRUE, ] %>% 
+  # No incluir categoria NA
+  filter(current_category != "NA") %>%
   # Clasificar especies en amenazada o no amenazada
   mutate(threat = ifelse(str_detect(current_category, pattern = "VU|EN|CR"), "amenazada", "no amenazada")) %>%
   # Agrupar por riesgo de amenaza
@@ -222,11 +229,11 @@ threat_med <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "m
   # Contar especies en cada grupo
   summarise(number_species = n()) %>% 
   # Calcular proporcion
-  mutate(freq = number_species/sum(number_species))
+  mutate(percentage = number_species/sum(number_species)*100)
 
 ## Representar grafico de especies incluidas y no incluidas en las categorias de amenaza a escala mediterranea
 threat_med %>%
-  ggplot(aes(x = threat, y = freq, fill = threat)) +
+  ggplot(aes(x = threat, y = percentage, fill = threat)) +
   # Grafico de barras
   geom_col() +
   # Deinir color
@@ -234,18 +241,18 @@ threat_med %>%
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = NULL, y = "Proporción") +
+  labs(x = NULL, y = "Porcentaje (%)") +
   # Modificar leyenda y texto de los ejes
   theme(legend.position = "none",
         axis.text = element_text(size = 20, colour = "black"),
         axis.title = element_text(size = 20, colour = "black")) +
   # Incluir etiquetas
-  geom_text(aes(label = number_species), vjust = -1, colour = "black", size = 5) +
+  geom_text(aes(label = paste(number_species,"\n","(",sprintf("%0.2f", round(percentage, digits = 2)),"%)")), colour = "black", vjust = -1, size = 5) +
   # Ajustar eje y
-  scale_y_continuous(limits=c(0, 1))
+  scale_y_continuous(limits = c(0, 100))
 
 # Guardar y cargar grafico anterior
-gr_threat_med <- load.image("./Plots/threat_med.png")
+gr_threat_med <- load.image("./Plots/threat_med2.png")
 
 ## Representar grafico de especies incluidas en cada categoria de la Lista Roja a escala mediterranea
 gr_category_med <- RedListIUCN_category_count_med %>%
@@ -263,10 +270,10 @@ gr_category_med <- RedListIUCN_category_count_med %>%
         axis.text = element_text(size = 30, colour = "black"),
         axis.title = element_text(size = 30, colour = "black")) +
   # Incluir etiquetas
-  geom_text(aes(label = number_species), vjust = -1, colour = "black", size = 8) +
+  geom_text(aes(label = paste(number_species,"\n","(",sprintf("%0.2f", round(percentage, digits = 2)),"%)")), colour = "black", vjust = -0.5, size = 5) +
   # Ajustar eje y
-  scale_y_continuous(limits=c(0, 55),
-                     breaks=c(10, 20, 30, 40, 50))
+  scale_y_continuous(limits = c(0, 55),
+                     breaks = c(10, 20, 30, 40, 50))
 
 ### Representar ambos graficos sobre la distribucion de categorias actual a escala mediterranea
 grafico_med <- ggdraw(gr_category_med) + 
@@ -281,20 +288,23 @@ plot_grid(grafico_eu, grafico_med, labels = c('AUTO'), label_size = 50, rel_widt
 gr_sp_budget <- LIFE_byspecies %>%
   # Seleccionar las primeras 20 especies
   head(n=20) %>%
+  # Dividir para representar en millones de euros
+  mutate(SumTotalBudgetWeighted = SumTotalBudgetWeighted/1000000) %>% 
   ggplot(aes(x = reorder(Species, SumTotalBudgetWeighted, sum), y = SumTotalBudgetWeighted)) +
   # Grafico de barras
-  geom_bar(stat="identity") +
+  geom_bar(stat = "identity", fill = "#440154FF") +
   # Intercambiar ejes x e y
   coord_flip() +
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = "Especie", y = "Presupuesto total (€)") +
+  labs(x = "Especie", y = "Presupuesto total (millones de euros)") +
   # Modificar texto de los ejes
-  theme(axis.text = element_text(size = 20, colour = "black"),
+  theme(axis.text.x = element_text(size = 20, colour = "black"),
+        axis.text.y = element_text(size = 20, colour = "black", face = "italic"),
         axis.title = element_text(size = 20, colour = "black")) +
   # Incluir etiquetas
-  geom_text(aes(label = SumTotalBudgetWeighted), hjust = 1.2, colour = "white", size = 5)
+  geom_text(aes(label = round(SumTotalBudgetWeighted, digits = 2)), hjust = 1.5, colour = "white", size = 5)
 
 ## Representar grafica de las 20 especies incluidas en el mayor numero de proyectos conservacion financiados por LIFE
 gr_sp_npro <- LIFE_byspecies %>%
@@ -304,7 +314,7 @@ gr_sp_npro <- LIFE_byspecies %>%
   head(n=20) %>%
   ggplot(aes(x = reorder(Species, NumProjects, sum), y = NumProjects)) +
   # Grafico de barras
-  geom_bar(stat="identity") + 
+  geom_bar(stat = "identity", fill = "#440154FF") +
   # Intercambiar ejes x e y
   coord_flip() +
   # Definir tema
@@ -312,10 +322,11 @@ gr_sp_npro <- LIFE_byspecies %>%
   # Modificar nombres de los ejes
   labs(x = "Especie", y = "Número de proyectos") +
   # Modificar texto de los ejes
-  theme(axis.text = element_text(size = 20, colour = "black"),
+  theme(axis.text.x = element_text(size = 20, colour = "black"),
+        axis.text.y = element_text(size = 20, colour = "black", face = "italic"),
         axis.title = element_text(size = 20, colour = "black")) +
   # Incluir etiquetas
-  geom_text(aes(label = NumProjects), hjust = 1.3, colour = "white", size = 5)
+  geom_text(aes(label = NumProjects), hjust = 1.5, colour = "white", size = 5)
 
 ### Combinar en un unico plot las especies con mayor inversion economica y logistica
 plot_grid(gr_sp_budget, gr_sp_npro, labels = c('AUTO'), label_size = 50, rel_widths = c(1, 1))
@@ -487,53 +498,64 @@ grafico_LIFE <- category_count %>%
 plot_grid(grafico_noLIFE, grafico_LIFE, labels = c("A", "B"), label_size = 60, rel_widths = c(1.2, 1))
 
 ## Representar Valor del cambio en las evaluaciones vs. Presupuesto invertido en especies
-# Grafico desde 0 a 20000000
+rects <- data.frame(start = c(-4, 0), end = c(0, 4), col = c("Deterioro", "Mejora"))
+
+# Grafico desde 0 a 20 millones de euros
 budget_change1 <- LIFE_IUCN_all_genuine %>%
-  # Agrupar por conservacion LIFE o no, presupuesto y valor del cambio
+  # Agrupar por presupuesto y valor del cambio
   group_by(ConservationProjects, SumTotalBudgetWeighted, ChangeValue) %>%
   # Contar numero de evaluaciones
   summarise(number_assessment = n()) %>%
-  # Añadir columna para clasificar el cambio
-  mutate(Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
-  ggplot(aes(x = SumTotalBudgetWeighted , y = ChangeValue, color = Change, fill = ConservationProjects, size = number_assessment)) +
+  # Dividir para representar en millones de euros
+  mutate(SumTotalBudgetWeighted = SumTotalBudgetWeighted/1000000) %>% 
+  ggplot() +
+  # Color de fondo del grafico segun mejora o deterioro
+  geom_rect(data = rects, aes(xmin = 0, xmax = 20, ymin = start, ymax = end, fill = col), alpha = 0.2) +
+  # Línea horizontal en y = 0
+  geom_hline(yintercept = 0, size = 2) +
   # Grafico de dispersion
-  geom_point(alpha = 0.6, shape = 21, stroke = 2) +
+  geom_point(aes(x = SumTotalBudgetWeighted , y = ChangeValue, color = ConservationProjects, size = number_assessment), alpha = 0.6, shape = 16) +
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = "Presupuesto total (€)", y = "Valor del cambio") +
+  labs(x = NULL, y = "Valor del cambio") +
   # Modificar leyenda y texto de los ejes
   theme(legend.position = "none",
         axis.text = element_text(size = 20, colour = "black"),
         axis.title = element_text(size = 25, colour = "black")) +
   # Modificar elementos de la leyenda
-  guides(color = guide_legend(override.aes = list(size = 7)),
-         fill = guide_legend(override.aes = list(size = 7))) +
+  guides(color = guide_legend(override.aes = list(size = 7))) +
   # Modificar relleno de los elementos
-  scale_fill_viridis_d(name = "LIFE", labels = c("NO", "SÍ"), begin = 0.6, end = 0) +
-  # Modificar nombre en leyenda del borde de los elementos
-  scale_color_discrete(name = "Tipo de cambio" ) +
+  scale_color_viridis_d(name = "LIFE", labels = c("NO", "SÍ"), begin = 0.6, end = 0) +
   # Modificar tamaño de los elementos
-  scale_size_continuous(name = "Nº de evaluaciones", range = c(4, 20), breaks = c(2, 4, 8, 16)) +
+  scale_size_continuous(name = "Nº de registros", range = c(4, 20), breaks = c(2, 4, 8, 16)) +
   # Ajustar eje x
-  scale_x_continuous(limits = c(0, 20000000),
-                     breaks = c(0, 5000000, 10000000, 15000000, 20000000))
+  scale_y_continuous(limits = c(-4, 4)) +
+  # Ajustar eje x
+  scale_x_continuous(limits = c(0, 20),
+                      breaks = c(0, 5, 10, 15, 20))
+    
 
-# Grafico desde 97500000 a 105000000
+# Grafico desde 99 a 105.5
 budget_change2 <- LIFE_IUCN_all_genuine %>%
   # Agrupar por conservacion LIFE o no, presupuesto y valor del cambio
   group_by(ConservationProjects, SumTotalBudgetWeighted, ChangeValue) %>%
   # Contar numero de evaluaciones
   summarise(number_assessment = n()) %>%
-  # Añadir columna para clasificar el cambio
-  mutate(Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
-  ggplot(aes(x = SumTotalBudgetWeighted , y = ChangeValue, color = Change, fill = ConservationProjects, size = number_assessment)) +
+  # Dividir para representar en millones de euros
+  mutate(SumTotalBudgetWeighted = SumTotalBudgetWeighted/1000000) %>% 
+  ggplot() +
+  # Color de fondo del grafico segun mejora o deterioro
+  geom_rect(data = rects, aes(xmin = 99, xmax = 105.5, ymin = start, ymax = end, fill = col), alpha = 0.2) +
+  scale_fill_discrete(guide = "none") +
+  # Línea horizontal en y = 0
+  geom_hline(yintercept = 0, size = 2) +
   # Grafico de dispersion
-  geom_point(alpha = 0.6, shape = 21, stroke = 2) +
+  geom_point(aes(x = SumTotalBudgetWeighted , y = ChangeValue, color = ConservationProjects, size = number_assessment), alpha = 0.6) +
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = "Presupuesto total (€)", y = "Valor del cambio") +
+  labs(x = NULL, y = NULL) +
   # Modificar leyenda y texto de la leyenda y los ejes
   theme(legend.title = element_text(size = 20, colour = "black"),
         legend.text = element_text(size = 20, colour = "black"),
@@ -541,20 +563,17 @@ budget_change2 <- LIFE_IUCN_all_genuine %>%
         axis.text.y = element_text(size = 20, colour = "white"),
         axis.title = element_text(size = 25, colour = "white")) +
   # Modificar elementos de la leyenda
-  guides(color = guide_legend(override.aes = list(size = 7)),
-         fill = guide_legend(override.aes = list(size = 7))) +
+  guides(color = guide_legend(override.aes = list(size = 7))) +
   # Modificar relleno de los elementos
-  scale_fill_viridis_d(name = "LIFE", labels = c("NO", "SÍ"), begin = 0.6, end = 0) +
-  # Modificar nombre en leyenda del borde de los elementos
-  scale_color_discrete(name = "Tipo de cambio" ) +
+  scale_color_viridis_d(name = "LIFE", labels = c("NO", "SÍ"), begin = 0.6, end = 0) +
   # Modificar tamaño de los elementos
-  scale_size_continuous(name = "Nº de evaluaciones", range = c(4, 20), breaks = c(2, 4, 8, 16)) +
+  scale_size_continuous(name = "Nº de registros", range = c(4, 20), breaks = c(2, 4, 8, 16)) +
   # Ajustar eje x
-  scale_x_continuous(limits = c(97500000, 105000000),
-                     breaks = c(100000000, 105000000))
+  scale_x_continuous(limits = c(99, 105.5),
+                     breaks = c(100, 105))
 
 # Combinar las dos partes del grafico del valor del cambio vs. presupuesto
-grid.arrange(budget_change1, budget_change2, nrow = 1, widths = c(8, 6))
+grid.arrange(budget_change1, budget_change2, nrow = 1, widths = c(8, 6), bottom = textGrob("Presupuesto total (millones de euros)", gp = gpar(fontsize = 25, col="black")))
 
 ## Representar Valor del cambio en las evaluaciones vs. Numero de proyectos dirigidos a especies
 LIFE_IUCN_all_genuine %>%
@@ -562,13 +581,17 @@ LIFE_IUCN_all_genuine %>%
   group_by(ConservationProjects, NumProjects, ChangeValue) %>%
   # Contar numero de evaluaciones
   summarise(number_assessment = n()) %>%
-  # Añadir columna para clasificar el cambio
-  mutate(Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
-  ggplot(aes(x = NumProjects , y = ChangeValue, color = Change, fill = ConservationProjects, size = number_assessment)) +
+  ggplot() +
+  # Color de fondo del grafico segun mejora o deterioro
+  geom_rect(data = rects, aes(xmin = 0, xmax = 31, ymin = start, ymax = end, fill = col), alpha = 0.2) +
+  scale_fill_discrete(guide = "none") +
+  # Línea horizontal en y = 0
+  geom_hline(yintercept = 0, size = 2) +
   # Grafico de dispersion
-  geom_point(alpha = 0.6, shape = 21, stroke = 2) +
+  geom_point(aes(x = NumProjects , y = ChangeValue, color = ConservationProjects, size = number_assessment), alpha = 0.6) +
   # Definir tema
   theme_minimal() +
+  # Modificar nombres de ejes
   labs(x = "Número de proyectos", y = "Valor del cambio") +
   # Modificar leyenda y texto de la leyenda y los ejes
   theme(legend.title = element_text(size = 20, colour = "black"),
@@ -576,17 +599,14 @@ LIFE_IUCN_all_genuine %>%
         axis.text = element_text(size = 25, colour = "black"),
         axis.title = element_text(size = 25, colour = "black")) +
   # Modificar elementos de la leyenda
-  guides(color = guide_legend(override.aes = list(size = 7)),
-         fill = guide_legend(override.aes = list(size = 7))) +
+  guides(color = guide_legend(override.aes = list(size = 7))) +
   # Modificar relleno de los elementos
-  scale_fill_viridis_d(name = "LIFE", labels = c("NO", "SÍ"), begin = 0.6, end = 0) +
-  # Modificar nombre en leyenda del borde de los elementos
-  scale_color_discrete(name = "Tipo de cambio") +
+  scale_color_viridis_d(name = "LIFE", labels = c("NO", "SÍ"), begin = 0.6, end = 0) +
   # Modificar tamaño de los elementos
-  scale_size_continuous(name = "Nº de evaluaciones", range = c(4, 20), breaks = c(2, 4, 8, 16))
+  scale_size_continuous(name = "Nº de registros", range = c(4, 20), breaks = c(2, 4, 8, 16))
 
 ## Representar Tiempo transcurrido entre el comienzo de la conservacion y el cambio de categoria vs. Presupuesto invertido en especies
-# Grafico desde 0 a 20000000
+# Grafico desde 0 a 20 millones de euros
 budget_time1 <- LIFE_IUCN_all_genuine %>%
   # Selecionar especies incluidas en proyectos de conservacion LIFE
   filter(ConservationProjects == TRUE) %>%
@@ -594,19 +614,21 @@ budget_time1 <- LIFE_IUCN_all_genuine %>%
   group_by(SumTotalBudgetWeighted, ChangeValue, TimeforChange) %>%
   # Contar numero de evaluaciones
   summarise(number_assessment = n()) %>%
-  # Añadir columna para clasificar el cambio
-  mutate(Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
+  # Dividir para representar en millones de euros y añadir columna para clasificar el cambio
+  mutate(SumTotalBudgetWeighted = SumTotalBudgetWeighted/1000000,
+         Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
   ggplot(aes(x = SumTotalBudgetWeighted , y = TimeforChange, color = Change, size = number_assessment)) +
   # Grafico de dispersion
   geom_point(alpha = 0.6) +
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = "Presupuesto total (€)", y = "Tiempo (años)") +
+  labs(x = NULL, y = "Tiempo (años)") +
   # Modificar leyenda y texto de los ejes
   theme(legend.position = "none",
         axis.text = element_text(size = 20, colour = "black"),
-        axis.title = element_text(size = 25, colour = "black")) +
+        axis.title.x = element_text(size = 25, colour = "black"),
+        axis.title.y = element_text(size = 25, colour = "black")) +
   # Modificar elementos de la leyenda
   guides(color = guide_legend(override.aes = list(size = 6))) +
   # Modificar nombre en leyenda del borde de los elementos
@@ -614,10 +636,10 @@ budget_time1 <- LIFE_IUCN_all_genuine %>%
   # Modificar tamaño de los elementos
   scale_size_continuous(name = "Nº de evaluaciones", range = c(6, 10), breaks = c(1, 2)) +
   # Ajustar eje x
-  scale_x_continuous(limits = c(0, 20000000),
-                     breaks = c(0, 10000000, 20000000))
+  scale_x_continuous(limits = c(0, 20),
+                     breaks = c(0, 5, 10, 15, 20))
 
-# Grafico desde 97500000 a 110500000
+# Grafico desde 99 a 105.5 millones de euros
 budget_time2 <- LIFE_IUCN_all_genuine %>%
   # Selecionar especies incluidas en proyectos de conservacion LIFE
   filter(ConservationProjects == TRUE) %>%
@@ -626,14 +648,15 @@ budget_time2 <- LIFE_IUCN_all_genuine %>%
   # Contar numero de evaluaciones
   summarise(number_assessment = n()) %>%
   # Añadir columna para clasificar el cambio
-  mutate(Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
+  mutate(SumTotalBudgetWeighted = SumTotalBudgetWeighted/1000000,
+         Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
   ggplot(aes(x = SumTotalBudgetWeighted , y = TimeforChange, color = Change, size = number_assessment)) +
   # Grafico de dispersion
   geom_point(alpha = 0.6) +
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = "Presupuesto total (€)", y = NULL) +
+  labs(x = NULL, y = NULL) +
   # Modificar leyenda y texto de los ejes
   theme(legend.position = "none",
         axis.text.x = element_text(size = 20, colour = "black"),
@@ -646,11 +669,11 @@ budget_time2 <- LIFE_IUCN_all_genuine %>%
   # Modificar tamaño de los elementos
   scale_size_continuous(name = "Nº de evaluaciones", range = c(6, 10), breaks = c(1, 2)) +
   # Ajustar eje x
-  scale_x_continuous(limits = c(97500000, 110500000),
-                     breaks = c(100000000, 110000000))
+  scale_x_continuous(limits = c(99, 105.5),
+                     breaks = c(100, 105))
 
 # Combinar las dos partes del grafico del tiempo en producirse el cambio vs. presupuesto
-budget_time <- grid.arrange(budget_time1, budget_time2, nrow = 1, widths = c(8, 5))
+budget_time <- grid.arrange(budget_time1, budget_time2, nrow = 1, widths = c(8, 3), bottom = textGrob("Presupuesto total (millones de euros)", gp = gpar(fontsize = 25, col="black")))
 
 projects_time <- LIFE_IUCN_all_genuine %>%
   # Selecionar especies incluidas en proyectos de conservacion LIFE
@@ -667,18 +690,19 @@ projects_time <- LIFE_IUCN_all_genuine %>%
   # Definir tema
   theme_minimal() +
   # Modificar nombres de los ejes
-  labs(x = "Número de proyectos", y = NULL) +
-  # Modificar leyenda y texto de los ejes
-  theme(legend.position = "none",
+  labs(x = "Número de proyectos", y = "NA") +
+  # Modificar texto de la leyenda y los ejes
+  theme(legend.title = element_text(size = 20, colour = "black"),
+        legend.text = element_text(size = 20, colour = "black"),
         axis.text = element_text(size = 20, colour = "black"),
         axis.title.x = element_text(size = 25, colour = "black"),
-        axis.title.y = element_text(size = 25, colour = "black")) +
+        axis.title.y = element_text(size = 15, colour = "white")) +
   # Modificar elementos de la leyenda
   guides(color = guide_legend(override.aes = list(size = 6))) +
   # Modificar nombre en leyenda del borde de los elementos
   scale_color_discrete(name = "Tipo de cambio") +
   # Modificar tamaño de los elementos
-  scale_size_continuous(name = "Nº de evaluaciones", range = c(6, 10), breaks = c(1, 2))
+  scale_size_continuous(name = "Nº de registros", range = c(6, 10), breaks = c(1, 2))
 
 ### Combinar en un unico plot los graficos sobre el tiempo transcurrido hasta el cambio de categoria vs. inversion
 plot_grid(budget_time, projects_time, labels = c('AUTO'), label_size = 50, label_x = c(0.875, 0.65), rel_widths = c(1, 1.15))
@@ -690,18 +714,18 @@ projects_test_df <- LIFEproject_IUCN_all_genuine %>%
   mutate(SingleSpeciesProyect = ifelse(is.na(SingleSpeciesProyect), "No project",
                                        ifelse(SingleSpeciesProyect == TRUE, "Single-species project", "Multi-species project"))) %>%
   select(Reference, SingleSpeciesProyect, PrvCategory, PstCategory, ChangeValue)
-# Se asume que los datos siguen la misma distribucion, pero distinta a una normal
-# Se asume homocedasticidad
-leveneTest(y = projects_test_df$ChangeValue, group = as.factor(projects_test_df$SingleSpeciesProyect), center = "median")
 
 # Supuesto de normalidad para ANOVA
 by(projects_test_df$ChangeValue, projects_test_df$SingleSpeciesProyect, shapiro.test) # no se cumple supuesto de normalidad
 # Supuesto de homocedasticidad
-leveneTest(y = projects_test_df$ChangeValue, group = projects_test_df$SingleSpeciesProyect, center = "median") # no podemos rechazar la hipotesis nula, varianzas iguales
+leveneTest(y = projects_test_df$ChangeValue, group = as.factor(projects_test_df$SingleSpeciesProyect), center = "median") # no podemos rechazar la hipotesis nula, varianzas iguales
 
 # Alternativa, test de Kruskal-Wallis
 projects_test <- kruskal.test(formula = ChangeValue~SingleSpeciesProyect, data = projects_test_df) 
-projects_test
+projects_test # p-valor < 0.05 significativo, hay diferencias entre grupos
+
+# Comparacion Post-Hoc
+pairwise.wilcox.test(x = projects_test_df$ChangeValue, g = projects_test_df$SingleSpeciesProyect, p.adjust.method = "holm" )
 
 ############ Funciones empleadas en el script ############
 
