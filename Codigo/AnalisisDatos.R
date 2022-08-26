@@ -361,6 +361,13 @@ gr_ev_category <- LIFE_IUCN_all %>%
   # Ajustar eje y
   scale_y_continuous(limits=c(0,55), breaks = c(0, 10, 20, 30, 40, 50))
 
+# Cargar imagen de grafico
+im_ev_threat <- load.image("./Plots/ev_threat.png")
+
+### Combinar en un unico plot los graficos sobre la distribucion de las evaluaciones del dataset LIFE_IUCN_all
+ggdraw(gr_ev_category) + 
+  draw_image(im_ev_threat, x = 1.15, y = 1, hjust = 1, vjust = 1, width = 0.65, height = 0.65)
+
 # Numero de evaluaciones más recientes en categorias o no de amenaza de especies con conservacion LIFE
 LIFE_IUCN_all %>% 
   # Selecionar especies incluidas en proyectos de conservacion LIFE
@@ -386,13 +393,6 @@ LIFE_IUCN_all %>%
   group_by(threat) %>% 
   # Contar evaluaciones en cada grupo
   summarise(number_species = n())
-
-# Cargar imagen de grafico
-im_ev_threat <- load.image("./Plots/ev_threat.png")
-
-### Combinar en un unico plot los graficos sobre la distribucion de las evaluaciones del dataset LIFE_IUCN_all
-ggdraw(gr_ev_category) + 
-  draw_image(im_ev_threat, x = 1.15, y = 1, hjust = 1, vjust = 1, width = 0.65, height = 0.65)
 
 #### Analisis de los datos de LIFE_IUCN_all_genuine ####
 
@@ -464,7 +464,7 @@ grafico_noLIFE <- category_count %>%
         axis.title.y = element_text(size = 30, colour = "black"),
         plot.title = element_text(size = 30, hjust = 0.5)) +
   # Ajustar el relleno de los elementos
-  scale_fill_viridis_d(begin = 0, end = 0.6, labels = c("Anterior", "Posterior")) +
+  scale_fill_viridis_d(begin = 0.1, end = 0.9, labels = c("Anterior", "Posterior")) +
   # Ajustar eje y
   scale_y_continuous(breaks = c(0, 5, 10, 15, 20, 25))
 
@@ -489,7 +489,7 @@ grafico_LIFE <- category_count %>%
         axis.title = element_text(size = 30, colour = "black"),
         plot.title = element_text(size = 30, hjust = 0.5)) +
   # Ajustar el relleno de los elementos
-  scale_fill_viridis_d(begin = 0, end = 0.6, labels = c("Anterior", "Posterior")) +
+  scale_fill_viridis_d(begin = 0.1, end = 0.9, labels = c("Anterior", "Posterior")) +
   # Ajustar eje y
   scale_y_continuous(limits = c(0,12),
                      breaks = c(0, 5, 10))
@@ -604,6 +604,15 @@ LIFE_IUCN_all_genuine %>%
   scale_color_viridis_d(name = "LIFE", labels = c("NO", "SÍ"), begin = 0.6, end = 0) +
   # Modificar tamaño de los elementos
   scale_size_continuous(name = "Nº de registros", range = c(4, 20), breaks = c(2, 4, 8, 16))
+
+# Supuesto de normalidad para ANOVA
+by(LIFE_IUCN_all_genuine$ChangeValue, LIFE_IUCN_all_genuine$ConservationProjects, shapiro.test) # no se cumple supuesto de normalidad
+# Supuesto de homocedasticidad
+leveneTest(y = LIFE_IUCN_all_genuine$ChangeValue, group = as.factor(LIFE_IUCN_all_genuine$ConservationProjects), center = "median") # no podemos rechazar la hipotesis nula, varianzas iguales
+
+# Alternativa, test de Kruskal-Wallis
+conservation_test <- kruskal.test(formula = ChangeValue~ConservationProjects, data = LIFE_IUCN_all_genuine)
+conservation_test
 
 ## Representar Tiempo transcurrido entre el comienzo de la conservacion y el cambio de categoria vs. Presupuesto invertido en especies
 # Grafico desde 0 a 20 millones de euros
