@@ -625,7 +625,7 @@ budget_time1 <- LIFE_IUCN_all_genuine %>%
   summarise(number_assessment = n()) %>%
   # Dividir para representar en millones de euros y añadir columna para clasificar el cambio
   mutate(SumTotalBudgetWeighted = SumTotalBudgetWeighted/1000000,
-         Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
+         Change = ifelse(ChangeValue > 0, "Mejora", "Deterioro")) %>%
   ggplot(aes(x = SumTotalBudgetWeighted , y = TimeforChange, color = Change, size = number_assessment)) +
   # Grafico de dispersion
   geom_point(alpha = 0.6) +
@@ -658,7 +658,7 @@ budget_time2 <- LIFE_IUCN_all_genuine %>%
   summarise(number_assessment = n()) %>%
   # Añadir columna para clasificar el cambio
   mutate(SumTotalBudgetWeighted = SumTotalBudgetWeighted/1000000,
-         Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
+         Change = ifelse(ChangeValue > 0, "Mejora", "Deterioro")) %>%
   ggplot(aes(x = SumTotalBudgetWeighted , y = TimeforChange, color = Change, size = number_assessment)) +
   # Grafico de dispersion
   geom_point(alpha = 0.6) +
@@ -692,7 +692,7 @@ projects_time <- LIFE_IUCN_all_genuine %>%
   # Contar numero de evaluaciones
   summarise(number_assessment = n()) %>%
   # Añadir columna para clasificar el cambio
-  mutate(Change = ifelse(ChangeValue > 0, "Deterioro", "Mejora")) %>%
+  mutate(Change = ifelse(ChangeValue > 0, "Mejora", "Deterioro")) %>%
   ggplot(aes(x = NumProjects , y = TimeforChange, color = Change, size = number_assessment)) +
   # Grafico de dispersion
   geom_point(alpha = 0.6) +
