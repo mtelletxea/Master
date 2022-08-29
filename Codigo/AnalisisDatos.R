@@ -148,7 +148,7 @@ RedListIUCN_category_count_eu <- RedListIUCN[str_detect(RedListIUCN$region_ident
   # Calcular porcentaje
   mutate(percentage = number_species/sum(number_species)*100)
 
-## Especies incluidas en las 3 categorias de amenaza a escala europea
+## Especies incluidas en las tres categorias de amenaza a escala europea
 threat_eu <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "europe") == TRUE, ] %>%
   # No incluir categoria NA
   filter(current_category != "NA") %>%
@@ -218,7 +218,7 @@ RedListIUCN_category_count_med <- RedListIUCN[str_detect(RedListIUCN$region_iden
   # Calcular porcentaje
   mutate(percentage = number_species/sum(number_species)*100)
 
-# Especies incluidas en las 3 categorias de amenaza a escala mediterranea
+# Especies incluidas en las tres categorias de amenaza a escala mediterranea
 threat_med <- RedListIUCN[str_detect(RedListIUCN$region_identifier, pattern = "mediterranean") == TRUE, ] %>% 
   # No incluir categoria NA
   filter(current_category != "NA") %>%
@@ -333,7 +333,7 @@ plot_grid(gr_sp_budget, gr_sp_npro, labels = c('AUTO'), label_size = 50, rel_wid
 
 #### Analisis de los datos de LIFE_IUCN_all ####
 
-## Representar distribucion de evaluaciones más recientes en a cada categoría de la Lista Roja según la especie este o no en LIFE 
+## Representar distribucion de evaluaciones más recientes en cada categoría de la Lista Roja según la especie este o no en LIFE 
 gr_ev_category <- LIFE_IUCN_all %>%
   # Ignorar categoria NA para la representacion
   filter(current_category != "NA") %>% 
