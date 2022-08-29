@@ -6,9 +6,9 @@
 ## Outputs: 
 ##          - species_europe.csv (Base de datos de consultas de todos los organismos evaluados a nivel europeo)
 ##          - species_mediterranean.csv (Base de datos de consultas de todos los organismos evaluados a nivel mediterraneo)
-##          - RedListIUCN.csv (Base de datos del historico todas las evaluaciones a nivel europeo y mediterraneo)
+##          - RedListIUCN.csv (Base de datos del historico de todas las evaluaciones a nivel europeo y mediterraneo)
 ##          - synonyms.csv (Base de datos de los sinonimos existentes)
-##          - RedListIUCNsyn.csv (Base de datos que sera cruzada con la base de datos de projectos LIFE)
+##          - RedListIUCNsyn.csv (Base de datos que sera cruzada con la base de datos de proyectos LIFE)
 ##
 
 #### Packages ####
