@@ -3,13 +3,13 @@
 ## Autor: Maite Telletxea Martinez
 ## 
 ## Input datasets:
-##          - LIFE_byspecies (Base de datos de inversion para cada especie)
-##          - LIFE_byspeciesproject (Base de datos de inversion por proyecto y especie)
+##          - LIFE_byspecies (Base de datos de la inversion LIFE para cada especie)
+##          - LIFE_byspeciesproject (Base de datos de la inversion LIFE por proyecto y especie)
 ##          - RedListIUCNsyn (Base de datos del historico de las evaluaciones para cada especie o su sinonimo taxonomico)
 ##
 ## Output datasets:
-##          - LIFE_IUCN_all (Base de datos de inversión por especies asociadas a su histórico de evaluaciones),
-##          - LIFEproject_IUCN_all (Base de datos de inversión por projecto y especies asociadas a su histórico de evaluaciones)
+##          - LIFE_IUCN_all (Base de datos de inversion por especies asociada a su histórico de evaluaciones)
+##          - LIFEproject_IUCN_all (Base de datos de inversion por projecto y especies asociada a su histórico de evaluaciones)
 ##          - RedListIUCN2 (RedListIUCN modificado)
 ##          - RedListIUCNsyn (modificado)
 ##
