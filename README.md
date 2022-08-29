@@ -12,7 +12,6 @@ Bases de datos creadas a lo largo del proyecto, en formato CSV.
   - RedListIUCN.csv: base de datos del histórico de todas las evaluaciones de la Lista Roja a escala europea o mediterrénea.
   - synonyms.csv: base de datos de los sinónimos existentes de las especies evaluadas a escala europea o mediterránea.
   - RedListIUCNsyn.csv: base de datos complementaria que contiene las evaluaciones de RedListIUCN.csv y una columna extra para sinónimos taxonómicos. Se trata de una base de datos más extensa donde a una especie corresponderán tantos registros como sinónimos posea.
-  - LIFE.csv: base de datos más completa sobre los proyectos LIFE.
   - LIFE_byspecies.csv: base de datos de la inversion LIFE destinada a cada especie.
   - LIFE_byspeciesproject.csv: base de datos de la inversión LIFE por proyecto y especie.
   - genuine_changes.csv: base de datos de cambios genuinos registrados en la Lista Roja.
