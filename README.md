@@ -1,4 +1,4 @@
-# Master: Análisis de la eficiencia del programa LIFE en la conservación de la biodiversidad
+# Máster: Análisis de la eficiencia del programa LIFE en la conservación de la biodiversidad
 
 Se recomienda descargar todo el contenido del repositorio y guardarlo como un proyecto de R.
 
@@ -9,6 +9,17 @@ Datos brutos utilizados en el proyecto. Encontramos información en diferentes f
 
 ### Datos procesados
 Bases de datos creadas a lo largo del proyecto, en formato CSV.
+  - RedListIUCN.csv: base de datos del histórico de todas las evaluaciones de la Lista Roja a escala europea o mediterrénea.
+  - synonyms.csv: base de datos de los sinónimos existentes de las especies evaluadas a escala europea o mediterránea.
+  - RedListIUCNsyn.csv: base de datos complementaria que contiene las evaluaciones de RedListIUCN.csv y una columna extra para sinónimos taxonómicos. Se trata de una base de datos más extensa donde a una especie corresponderán tantos registros como sinónimos posea.
+  - LIFE.csv: base de datos más completa sobre los proyectos LIFE.
+  - LIFE_byspecies.csv: base de datos de la inversion LIFE destinada a cada especie.
+  - LIFE_byspeciesproject.csv: base de datos de la inversión LIFE por proyecto y especie.
+  - genuine_changes.csv: base de datos de cambios genuinos registrados en la Lista Roja.
+  - genuine_changes_syn.csv: base de datos complementaria que contiene los cambios genuinos de genuine_changes.csv una columna extra para sinónimos taxonómicos.
+  - LIFE_IUCN_all.csv: base de datos de la inversión LIFE por especies asociada a su histórico de evaluaciones.
+  - LIFEproject_IUCN_all.csv: base de datos de la inversión LIFE por especies asociada a su histórico de evaluaciones.
+  - RedListIUCN2.csv: base de datos del histórico de todas las evaluaciones de la Lista Roja a escala europea, mediterrénea o global (RedListIUCN modificado).
 
 ### Codigo
 Seis scripts de R escritos a lo largo del proyecto. 
@@ -21,6 +32,14 @@ Seis scripts de R escritos a lo largo del proyecto.
             
 ### Workspaces
 Espacios de trabajos de R guardados (formato RData o RDS) con el objetivo de facilitar la accesibilidad a datasets, ante posibles dificultades.
+  - species_region_functions.RData: funciones necesarias para las consultas de especies evaluadas a nivel regional.
+  - redlist.RData: dataframes relacionados con las evaluaciones a escala europea y mediterránea de la Lista Roja.
+  - synonyms.rds: dataframe de sinónimos de especies evaluadas a escala europea y mediterránea. 
+  - life.RData: dataframes relacionados con la información de la base de datos del programa LIFE.
+  - cambios.RData: dataframes relacionados con los cambios genuinos detectados en especies de la Lista Roja.
+  - RedListIUCNglobal.RData: dataframes relacionados con las evaluaciones a escala global de especies incluidas en el programa europeo LIFE.
+  - LifeRedlist.RData: dataframes relacionados con la combinación de las bases de datos LIFE y la Lista Roja.
+  - LifeRedlistgenuines.RData: dataframes relacionados con la combinación de las bases de datos LIFE y la Lista Roja donde se consideran solo cambios genuinos.
 
 ### Plots
 Conjunto de figuras exportadas a lo largo del proyecto.
