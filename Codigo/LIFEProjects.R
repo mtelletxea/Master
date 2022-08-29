@@ -6,9 +6,9 @@
 ## Inputs:
 ##          - LIFE0.xlsx (Base de datos de proyectos LIFE trabajada primero en excel)
 ## Outputs: 
-##          - LIFE.csv (Dataset más completo y definitivo)
-##          - LIFE_byspecies.csv (Base de datos de inversion para cada especies)
-##          - LIFE_byspeciesproject.csv (Base de datos de inversion por proyecto y especie)
+##          - LIFE.csv (Dataset más completo y definitivo sobre los proyectos LIFE)
+##          - LIFE_byspecies.csv (Base de datos de la inversion LIFE para cada especie)
+##          - LIFE_byspeciesproject.csv (Base de datos de la inversion LIFE por proyecto y especie)
 ##
 
 #### Packages ####
